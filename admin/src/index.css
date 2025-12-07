@@ -1,0 +1,26 @@
+/* Import Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Poppins&display=swap");
+
+/* Tailwind Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global styles */
+@layer base {
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+  }
+
+  :root {
+    --primary-color: #1b4b33;
+    --secondary-color: #149253;
+    --ternary-color: #f5dbcb;
+    --text-secondary-color: #545963;
+    --blue-color: #60a5fa;
+    --yellow-color: #fed02f;
+    --bg-grey: #f8f8f8;
+    --danger-color: #bf4342;
+  }
+}

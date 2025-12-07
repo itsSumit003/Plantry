@@ -1,0 +1,51 @@
+/* Import Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Poppins&display=swap");
+
+/* Tailwind base setup (v3) */
+/* Swiper CSS first */
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";
+
+/* Then Tailwind directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+/* Global styles */
+
+@layer base {
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  code {
+    font-family: "source-code-pro", Menlo, Monaco, Consolas, "Courier New",
+      monospace;
+  }
+
+  :root {
+    --primary-color: #1b4b33;
+    --secondary-color: #149253;
+    --ternary-color: #f5dbcb;
+    --text-secondary-color: #545963;
+    --blue-color: #60a5fa;
+    --yellow-color: #fed02f;
+    --bg-grey: #f8f8f8;
+    --danger-color: #bf4342;
+  }
+
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+  }
+}
+
+
