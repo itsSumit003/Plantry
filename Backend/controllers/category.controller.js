@@ -5,8 +5,12 @@ const Category = db.Category;
 // CREATE CATEGORY
 export const createCategory = async (req, res) => {
   try {
-    const { name, parent_id, image, status } = req.body;
+    const { name, parent_id, status } = req.body;
 
+    // image multer se aayegi
+    const image = req.file ? req.file.filename : null;
+
+    // slug auto generate
     const slug = slugify(name, { lower: true, strict: true });
 
     const category = await Category.create({
@@ -23,6 +27,7 @@ export const createCategory = async (req, res) => {
       success: true,
       message: "Category created successfully",
     });
+
   } catch (err) {
     res.status(500).json({
       error: err.message,
@@ -39,11 +44,12 @@ export const getCategories = async (req, res) => {
     const categories = await Category.findAll();
 
     res.status(200).json({
-      categories: categories,
+      categories,
       status: 200,
       success: true,
       message: "Categories fetched successfully",
     });
+
   } catch (err) {
     res.status(500).json({
       error: err.message,

@@ -10,6 +10,10 @@ import bannerRoutes from "./routes/banner.routes.js";
 import CartRoutes from "./routes/cart.routes.js";
 import Watchlist from "./routes/watchlist.routes.js";
 import cors from "cors";
+import adminRoutes from "../Backend/admin/routes/admin.routes.js";
+import roleRoutes from "../Backend/admin/routes/role.routes.js";
+import permissionRoutes from "../Backend/admin/routes/permission.routes.js";
+import assignRoutes from "../Backend/admin/routes/assign.routes.js";
 
 const app = express();
 
@@ -38,7 +42,10 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/banners", bannerRoutes);
 app.use("/api/cart", CartRoutes);
 app.use("/api/watchlist", Watchlist);
-
 app.use("/uploads", express.static("uploads"));
+app.use("/api/admin/auth", adminRoutes);
+app.use("/api/admin/roles", roleRoutes);
+app.use("/api/admin/permissions", permissionRoutes);
+app.use("/api/admin/assign", assignRoutes);
 
 export default app;

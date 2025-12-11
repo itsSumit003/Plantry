@@ -1,15 +1,13 @@
 import { useState } from "react";
-import { useAuth } from "../../context/AuthContext";
+import axios from "axios"; // ← ADDED
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 
 export default function Login() {
-  const { login, loading } = useAuth();
-
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [showPass, setShowPass] = useState(false);
+  const [loading, setLoading] = useState(false); // ← ADDED
 
-  // FIXED stronger regex (your version had a SPACE after +)
   const validate = () => {
     if (!form.email.trim()) return "Email is required";
     if (!/\S+@\S+\.\S+/.test(form.email)) return "Invalid email format";
@@ -40,6 +38,7 @@ export default function Login() {
     setError("");
   };
 
+  // ⭐⭐⭐ API LOGIN IMPLEMENTATION ADDED HERE ⭐⭐⭐
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -48,10 +47,29 @@ export default function Login() {
     if (err) return setError(err);
 
     try {
-      await login(form.email, form.password); 
-      // navigation happens inside AuthContext.login()
+      setLoading(true);
+
+      const res = await axios.post(
+        "http://localhost:3000/api/admin/auth/login",
+        {
+          email: form.email,
+          password: form.password,
+        }
+      );
+
+      // Save token
+      localStorage.setItem("adminToken", res.data.token);
+
+      alert("Login Successful!");
+      console.log("Admin:", res.data.admin);
+
+      // Optionally redirect
+      // window.location.href = "/admin/dashboard";
+
     } catch (err) {
-      setError(err.message || "Login failed");
+      setError(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 

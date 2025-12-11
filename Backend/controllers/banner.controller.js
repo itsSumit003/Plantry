@@ -2,7 +2,7 @@ import Banner from "../models/banner.model.js";
 import slugify from "slugify";
 import { sendResponse } from "../utils/response.js";
 
-// CREATE BANNER (Single image)
+// CREATE BANNER (Multiple images - Each with unique slug)
 export const createBanner = async (req, res) => {
   try {
     const { title, redirect_url, sort_order, is_active } = req.body;
@@ -11,25 +11,43 @@ export const createBanner = async (req, res) => {
       return sendResponse(res, 400, false, "Title is required");
     }
 
-    // Single Image Check
-    if (!req.file) {
-      return sendResponse(res, 400, false, "Banner image is required");
+    if (!req.files || req.files.length === 0) {
+      return sendResponse(res, 400, false, "At least one banner image is required");
     }
 
-    const slug = slugify(title, { lower: true, strict: true });
+    const banners = [];
 
-    const imageUrl = `/uploads/${req.file.filename}`;
+    for (const file of req.files) {
 
-    const banner = await Banner.create({
-      title,
-      slug,
-      image: imageUrl,
-      redirect_url,
-      sort_order,
-      is_active,
-    });
+      // Base slug
+      const baseSlug = slugify(title, { lower: true, strict: true });
 
-    return sendResponse(res, 201, true, "Banner created successfully", banner);
+      // Unique slug for every image
+      const uniqueSlug = `${baseSlug}-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+
+      const imageUrl = `/uploads/${file.filename}`;
+
+      // Create a separate banner record for each image
+      const banner = await Banner.create({
+        title,
+        slug: uniqueSlug,   // <-- unique slug
+        image: imageUrl,
+        redirect_url,
+        sort_order,
+        is_active,
+      });
+
+      banners.push(banner);
+    }
+
+    return sendResponse(
+      res,
+      201,
+      true,
+      "Banners created successfully",
+      banners
+    );
+
   } catch (error) {
     return sendResponse(
       res,
@@ -41,6 +59,7 @@ export const createBanner = async (req, res) => {
     );
   }
 };
+
 
 // GET ALL BANNERS
 export const getBanners = async (req, res) => {
@@ -83,7 +102,7 @@ export const getActiveBanners = async (req, res) => {
   }
 };
 
-// GET SINGLE BANNER BY ID
+// GET SINGLE BANNER
 export const getBannerById = async (req, res) => {
   try {
     const banner = await Banner.findByPk(req.params.id);
@@ -115,10 +134,9 @@ export const updateBanner = async (req, res) => {
       return sendResponse(res, 404, false, "Banner not found");
     }
 
-    // Update fields
+    // Use existing image unless a new one is uploaded
     let imageUrl = banner.image;
 
-    // If new image uploaded
     if (req.file) {
       imageUrl = `/uploads/${req.file.filename}`;
     }

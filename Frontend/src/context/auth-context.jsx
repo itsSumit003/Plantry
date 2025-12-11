@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
 
   // ---------------------------------------------------------
   // RESTORE TOKEN + USER ON REFRESH
-  // ---------------------------------------------------------
+  // ---------------------------------------------------------z
   useEffect(() => {
     const savedToken = localStorage.getItem("authToken");
     const savedUser = localStorage.getItem("user");
@@ -32,15 +32,22 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await axios.post("http://localhost:3000/api/users/login", form);
 
-      // SAVE TOKEN & USER
-      localStorage.setItem("authToken", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      // Backend returns { data: { id, name, email, token }, success, message }
+      const payload = res.data?.data;
+      const authToken = payload?.token;
+      const userObj = payload
+        ? { id: payload.id, name: payload.name, email: payload.email }
+        : null;
 
-      setToken(res.data.token);
-      setUser(res.data.user);
+      // SAVE TOKEN & USER
+      localStorage.setItem("authToken", authToken || "");
+      localStorage.setItem("user", JSON.stringify(userObj));
+
+      setToken(authToken || "");
+      setUser(userObj);
 
       // MOST IMPORTANT: SET AXIOS HEADER
-      axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+      if (authToken) axios.defaults.headers.common["Authorization"] = `Bearer ${authToken}`;
 
       toast.success("Login Successful!");
       return { success: true };
@@ -78,7 +85,7 @@ export const AuthProvider = ({ children }) => {
     // REMOVE AXIOS HEADER
     delete axios.defaults.headers.common["Authorization"];
   };
-
+  console.log("AuthContext Rendered: ", { token, user });
   return (
     <AuthContext.Provider
       value={{

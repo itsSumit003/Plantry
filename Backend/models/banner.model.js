@@ -6,7 +6,7 @@ const Banner = sequelize.define(
   {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     title: { type: DataTypes.STRING },
-    slug: { type: DataTypes.STRING },
+    slug: { type: DataTypes.STRING, unique: true },
     image: { type: DataTypes.TEXT }, 
     redirect_url: { type: DataTypes.STRING },
     sort_order: { type: DataTypes.INTEGER, defaultValue: 0 },
